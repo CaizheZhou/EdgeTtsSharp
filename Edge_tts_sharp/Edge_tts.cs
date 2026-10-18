@@ -51,14 +51,7 @@ public class EdgeTts
     private static ReadOnlyMemory<byte> GetReadOnlyMemoryFromString(string s) => new(Encoding.UTF8.GetBytes(s));
     
 
-    private static string GenerateSecMsGecToken()
-    {
-        // 来自 https://github.com/rany2/edge-tts/issues/290#issuecomment-2464956570
-        var ticks = DateTime.Now.ToFileTimeUtc();
-        ticks -= ticks % 3_000_000_000;
-        var str = ticks + "6A5AA1D4EAFF4E9FB37E23D68491D6F4";
-        return Convert.ToHexString(SHA256.HashData(Encoding.ASCII.GetBytes(str)));
-    }
+    private static string GenerateSecMsGecToken() => SecMsGec.Generate();
 
     private static string GetTimestamp()
     {
@@ -147,7 +140,7 @@ public class EdgeTts
                       $"?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4" +
                       $"&ConnectionId={sendRequestId}" +
                   $"&Sec-MS-GEC={GenerateSecMsGecToken()}" +
-                  $"&Sec-MS-GEC-Version=1-{ChromiumVersion}" +
+                  $"&Sec-MS-GEC-Version=2-{ChromiumVersion}" +
                   "");
         // ws.Options.HttpVersion = HttpVersion.Version20;
         // ws.Options.Proxy = new WebProxy(new Uri("http://127.0.0.1:8888"));
